@@ -45,10 +45,9 @@ app.get('/', (request, response) => {
   response.send('<h1> Hello World </h1>')
 })
 
-app.get('/api/notes', (request, response) => {
-  Note.find({}).then(notes => {
-    response.json(notes)
-  })
+app.get('/api/notes', async (request, response) => {
+  const notes = await Note.find({})
+  response.json(notes) 
 })
 
 app.get('/api/notes/:id', (request, response, next) => {
@@ -65,14 +64,15 @@ app.get('/api/notes/:id', (request, response, next) => {
   })
 })
 
-app.delete('/api/notes/:id', (request, response, next) => {
+app.delete('/api/notes/:id', async (request, response, next) => {
   const { id } = request.params
 
-  Note.findByIdAndDelete(id).then(() => {
+  try {
+    await Note.findByIdAndDelete(id)
     response.status(204).end()
-  }).catch(err => {
-    next(err)
-  })
+  } catch(error) {
+    next(error)
+  }
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
@@ -99,7 +99,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     })
 })
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', async (request, response) => {
   const note = request.body
 
   if (!note || !note.content) {
@@ -114,9 +114,8 @@ app.post('/api/notes', (request, response) => {
     date: new Date().toISOString()
   })
 
-  newNote.save().then(notedSaved => {
-    response.json(notedSaved)
-  })
+  const notedSaved = await newNote.save()
+  response.json(notedSaved)
 })
 
 // The error handler must be before any other error middleware and after all controllers
@@ -126,6 +125,8 @@ app.use(notFound)
 app.use(handleError)
 
 const PORT = process.env.PORT
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server Running on Port ${PORT}`)
 })
+
+module.exports = { app, server }

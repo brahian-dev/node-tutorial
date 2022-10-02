@@ -1,6 +1,6 @@
 const { average } = require('../utils/for_testing')
 
-describe('Average Test', () => {
+describe.skip('Average Test', () => {
     test('One only value', () => {
         const result =  average([1])
 
