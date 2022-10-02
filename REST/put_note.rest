@@ -1,0 +1,15 @@
+PUT http://localhost:3001/api/notes/63151f4eea30d87415662e31
+Content-Type: application/json
+
+{
+    "content": "Esta es una Nota completamente actualizada con el Parametro de New",
+    "important": true
+}
+
+###
+
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+}
